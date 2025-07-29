@@ -2,6 +2,9 @@ import { useEffect, useState } from "react";
 import { TodoTemplate } from "@/components/templates/TodoTemplate";
 import { db } from "@/firebase";
 import { Todo, TodoStatus } from "@/types";
+import { AuthProvider, useAuth } from "@/hooks/useAuth";
+import { AuthForm } from "@/components/AuthForm";
+import { LogoutButton } from "@/components/LogoutButton";
 import {
   collection,
   addDoc,
@@ -11,31 +14,35 @@ import {
   doc,
 } from "firebase/firestore";
 
-export default function App() {
+function AppContent() {
+  const user = useAuth();
   const [todos, setTodos] = useState<Todo[]>([]);
   const [filter, setFilter] = useState<
     "すべて" | "未完了" | "完了" | "保留" | "リスケ"
   >("すべて");
 
   useEffect(() => {
+    if (!user) return;
     const fetchTodos = async () => {
       const snapshot = await getDocs(collection(db, "todos"));
       const data = snapshot.docs.map((doc) => ({
         id: doc.id,
-        ...doc.data(),
-      })) as Todo[];
+        ...(doc.data() as Omit<Todo, "id">),
+      }));
       setTodos(data);
     };
     fetchTodos();
-  }, []);
+  }, [user]);
 
   const addTodo = async (text: string, dueDate?: string) => {
+    if (!user) return;
     try {
-      const newTodo = {
+      const newTodo: Omit<Todo, "id"> = {
         text,
-        status: "未完了" as TodoStatus,
-        dueDate: dueDate || null,
+        status: "未完了",
+        dueDate: dueDate ?? undefined,
         createdAt: new Date().toISOString(),
+        userId: user.uid, // 任意: ユーザーごとに保存する場合
       };
       const docRef = await addDoc(collection(db, "todos"), newTodo);
       setTodos((prev) => [...prev, { ...newTodo, id: docRef.id }]);
@@ -82,15 +89,30 @@ export default function App() {
     filter === "すべて" ? true : todo.status === filter,
   );
 
+  if (!user) return <AuthForm />;
+
   return (
-    <TodoTemplate
-      todos={filteredTodos}
-      filter={filter}
-      onAddTodo={addTodo}
-      onToggle={toggleTodo}
-      onStatusChange={updateStatus}
-      onDelete={deleteTodo}
-      onFilterChange={setFilter}
-    />
+    <div>
+      <div className="flex justify-end p-2">
+        <LogoutButton />
+      </div>
+      <TodoTemplate
+        todos={filteredTodos}
+        filter={filter}
+        onAddTodo={addTodo}
+        onToggle={toggleTodo}
+        onStatusChange={updateStatus}
+        onDelete={deleteTodo}
+        onFilterChange={setFilter}
+      />
+    </div>
+  );
+}
+
+export default function App() {
+  return (
+    <AuthProvider>
+      <AppContent />
+    </AuthProvider>
   );
 }
