@@ -9,7 +9,7 @@ interface TodoItemProps {
   id: string;
   text: string;
   status: TodoStatus;
-  dueDate?: string;
+  dueDate?: string | null;
   onToggle: (id: string) => void;
   onStatusChange: (id: string, status: TodoStatus) => void;
   onDelete: (id: string) => void;
@@ -42,7 +42,10 @@ export default function TodoItem({
       />
 
       <div className="flex items-center gap-4 mt-2 sm:mt-0">
-        <DueDateLabel dueDate={dueDate} isCompleted={isCompleted} />
+        <DueDateLabel
+          dueDate={dueDate ?? undefined}
+          isCompleted={isCompleted}
+        />
         <DeleteButton onClick={() => onDelete(id)} />
       </div>
     </li>
