@@ -1,4 +1,4 @@
-import { TodoStatus } from "@/App";
+import { TodoStatus } from "@/types";
 
 interface StatusSelectProps {
   value: TodoStatus;

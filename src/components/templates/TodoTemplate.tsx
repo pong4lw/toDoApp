@@ -9,9 +9,9 @@ interface TodoTemplateProps {
   todos: Todo[];
   filter: FilterType;
   onAddTodo: (text: string, dueDate?: string) => void;
-  onToggle: (id: number) => void;
-  onStatusChange: (id: number, status: TodoStatus) => void;
-  onDelete: (id: number) => void;
+  onToggle: (id: string) => void;
+  onStatusChange: (id: string, status: TodoStatus) => void;
+  onDelete: (id: string) => void;
   onFilterChange: (filter: FilterType) => void;
 }
 

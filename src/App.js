@@ -1,43 +1,53 @@
 import { jsx as _jsx } from "react/jsx-runtime";
 import { useEffect, useState } from "react";
 import { TodoTemplate } from "@/components/templates/TodoTemplate";
+import { db } from "@/firebase";
+import { collection, addDoc, getDocs, updateDoc, deleteDoc, doc, } from "firebase/firestore";
 export default function App() {
-    const [todos, setTodos] = useState(() => {
-        const saved = localStorage.getItem("todos");
-        if (saved) {
-            try {
-                return JSON.parse(saved);
-            }
-            catch (e) {
-                console.error("保存データの解析に失敗:", e);
-            }
-        }
-        return [];
-    });
+    const [todos, setTodos] = useState([]);
+    const [filter, setFilter] = useState("すべて");
     useEffect(() => {
-        localStorage.setItem("todos", JSON.stringify(todos));
-    }, [todos]);
-    const addTodo = (text, dueDate) => {
-        const newTodo = {
-            id: Date.now(),
-            text,
-            status: "未完了",
-            dueDate,
+        const fetchTodos = async () => {
+            const snapshot = await getDocs(collection(db, "todos"));
+            const data = snapshot.docs.map((doc) => ({
+                id: doc.id,
+                ...doc.data(),
+            }));
+            setTodos(data);
         };
-        setTodos((prev) => [...prev, newTodo]);
+        fetchTodos();
+    }, []);
+    const addTodo = async (text, dueDate) => {
+        try {
+            const newTodo = {
+                text,
+                status: "未完了",
+                dueDate: dueDate || null,
+                createdAt: new Date().toISOString(),
+            };
+            const docRef = await addDoc(collection(db, "todos"), newTodo);
+            setTodos((prev) => [...prev, { ...newTodo, id: docRef.id }]);
+        }
+        catch (e) {
+            console.error("Error adding todo:", e);
+        }
     };
-    const toggleTodo = (id) => {
-        setTodos((prev) => prev.map((todo) => todo.id === id
-            ? { ...todo, status: todo.status === "完了" ? "未完了" : "完了" }
-            : todo));
-    };
-    const updateStatus = (id, newStatus) => {
+    const toggleTodo = async (id) => {
+        const target = todos.find((t) => t.id === id);
+        if (!target)
+            return;
+        const newStatus = target.status === "完了" ? "未完了" : "完了";
+        await updateDoc(doc(db, "todos", id), { status: newStatus });
         setTodos((prev) => prev.map((todo) => todo.id === id ? { ...todo, status: newStatus } : todo));
     };
-    const deleteTodo = (id) => {
+    const updateStatus = async (id, newStatus) => {
+        await updateDoc(doc(db, "todos", id), { status: newStatus });
+        setTodos((prev) => prev.map((todo) => todo.id === id ? { ...todo, status: newStatus } : todo));
+    };
+    const deleteTodo = async (id) => {
+        await deleteDoc(doc(db, "todos", id));
         setTodos((prev) => prev.filter((todo) => todo.id !== id));
     };
-    const [filter, setFilter] = useState("すべて");
     const sortedTodos = [...todos].sort((a, b) => {
         if (a.dueDate && b.dueDate)
             return new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime();

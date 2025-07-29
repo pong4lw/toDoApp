@@ -3,10 +3,11 @@
 export type TodoStatus = "未完了" | "完了" | "保留" | "リスケ";
 
 export interface Todo {
-  id: number;
+  id: string;
   text: string;
   status: TodoStatus;
-  dueDate?: string;
+  dueDate?: string | null;
+  createdAt?: string;
 }
 
 export type FilterType = TodoStatus | "すべて";

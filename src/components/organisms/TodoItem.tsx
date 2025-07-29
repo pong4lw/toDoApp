@@ -1,4 +1,4 @@
-import { TodoStatus } from "@/App";
+import { TodoStatus } from "@/types";
 import { Checkbox } from "../atoms/Checkbox";
 import { StatusSelect } from "../atoms/StatusSelect";
 import { DeleteButton } from "../atoms/DeleteButton";
@@ -6,13 +6,13 @@ import { DueDateLabel } from "../atoms/DueDateLabel";
 import { TodoLabel } from "../molecules/TodoLabel";
 
 interface TodoItemProps {
-  id: number;
+  id: string;
   text: string;
   status: TodoStatus;
   dueDate?: string;
-  onToggle: (id: number) => void;
-  onStatusChange: (id: number, status: TodoStatus) => void;
-  onDelete: (id: number) => void;
+  onToggle: (id: string) => void;
+  onStatusChange: (id: string, status: TodoStatus) => void;
+  onDelete: (id: string) => void;
 }
 
 export default function TodoItem({

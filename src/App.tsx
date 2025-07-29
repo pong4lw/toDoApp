@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { TodoTemplate } from "@/components/templates/TodoTemplate";
 import { db } from "@/firebase";
+import { Todo, TodoStatus } from "@/types";
 import {
   collection,
   addDoc,
@@ -9,16 +10,6 @@ import {
   deleteDoc,
   doc,
 } from "firebase/firestore";
-
-export type TodoStatus = "未完了" | "完了" | "保留" | "リスケ";
-
-export interface Todo {
-  id: string;
-  text: string;
-  status: TodoStatus;
-  dueDate?: string;
-  createdAt?: string;
-}
 
 export default function App() {
   const [todos, setTodos] = useState<Todo[]>([]);
