@@ -1,6 +1,6 @@
 // src/components/LogoutButton.tsx
 import { signOut } from "firebase/auth";
-import { auth } from "../lib/firebase";
+import { auth } from "@/firebase";
 
 export const LogoutButton = () => {
   const handleLogout = async () => {

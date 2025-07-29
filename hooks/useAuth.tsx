@@ -1,16 +1,21 @@
-// src/hooks/useAuth.ts
-import { useEffect, useState, createContext, useContext } from "react";
-import { onAuthStateChanged, User } from "firebase/auth";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  ReactNode,
+} from "react";
+import { User, onAuthStateChanged } from "firebase/auth";
 import { auth } from "@/firebase";
 
 const AuthContext = createContext<User | null>(null);
 
-export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
+export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      setUser(currentUser);
+    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+      setUser(firebaseUser);
     });
     return () => unsubscribe();
   }, []);

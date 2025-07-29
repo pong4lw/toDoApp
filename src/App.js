@@ -1,12 +1,18 @@
-import { jsx as _jsx } from "react/jsx-runtime";
+import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
 import { useEffect, useState } from "react";
 import { TodoTemplate } from "@/components/templates/TodoTemplate";
 import { db } from "@/firebase";
+import { AuthProvider, useAuth } from "@/hooks/useAuth";
+import { AuthForm } from "@/components/AuthForm";
+import { LogoutButton } from "@/components/LogoutButton";
 import { collection, addDoc, getDocs, updateDoc, deleteDoc, doc, } from "firebase/firestore";
-export default function App() {
+function AppContent() {
+    const user = useAuth();
     const [todos, setTodos] = useState([]);
     const [filter, setFilter] = useState("すべて");
     useEffect(() => {
+        if (!user)
+            return;
         const fetchTodos = async () => {
             const snapshot = await getDocs(collection(db, "todos"));
             const data = snapshot.docs.map((doc) => ({
@@ -16,14 +22,17 @@ export default function App() {
             setTodos(data);
         };
         fetchTodos();
-    }, []);
+    }, [user]);
     const addTodo = async (text, dueDate) => {
+        if (!user)
+            return;
         try {
             const newTodo = {
                 text,
                 status: "未完了",
-                dueDate: dueDate || null,
+                dueDate: dueDate ?? undefined,
                 createdAt: new Date().toISOString(),
+                userId: user.uid, // 任意: ユーザーごとに保存する場合
             };
             const docRef = await addDoc(collection(db, "todos"), newTodo);
             setTodos((prev) => [...prev, { ...newTodo, id: docRef.id }]);
@@ -58,5 +67,10 @@ export default function App() {
         return 0;
     });
     const filteredTodos = sortedTodos.filter((todo) => filter === "すべて" ? true : todo.status === filter);
-    return (_jsx(TodoTemplate, { todos: filteredTodos, filter: filter, onAddTodo: addTodo, onToggle: toggleTodo, onStatusChange: updateStatus, onDelete: deleteTodo, onFilterChange: setFilter }));
+    if (!user)
+        return _jsx(AuthForm, {});
+    return (_jsxs("div", { children: [_jsx("div", { className: "flex justify-end p-2", children: _jsx(LogoutButton, {}) }), _jsx(TodoTemplate, { todos: filteredTodos, filter: filter, onAddTodo: addTodo, onToggle: toggleTodo, onStatusChange: updateStatus, onDelete: deleteTodo, onFilterChange: setFilter })] }));
+}
+export default function App() {
+    return (_jsx(AuthProvider, { children: _jsx(AppContent, {}) }));
 }

@@ -4,7 +4,7 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
 } from "firebase/auth";
-import { auth } from "../lib/firebase";
+import { auth } from "@/firebase";
 
 export const AuthForm = () => {
   const [isNewUser, setIsNewUser] = useState(false);
