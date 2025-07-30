@@ -1,3 +1,5 @@
+import React from "react";
+
 interface TodoLabelProps {
   text: string;
   isCompleted: boolean;

@@ -10,6 +10,7 @@ function AppContent() {
     const user = useAuth();
     const [todos, setTodos] = useState([]);
     const [filter, setFilter] = useState("すべて");
+    const [loading, setLoading] = useState(true);
     useEffect(() => {
         if (!user)
             return;
@@ -22,6 +23,7 @@ function AppContent() {
             setTodos(data);
         };
         fetchTodos();
+        setLoading(false);
     }, [user]);
     const addTodo = async (text, dueDate) => {
         if (!user)
@@ -32,7 +34,7 @@ function AppContent() {
                 status: "未完了",
                 dueDate: dueDate ?? undefined,
                 createdAt: new Date().toISOString(),
-                userId: user.uid, // 任意: ユーザーごとに保存する場合
+                userId: user.uid,
             };
             const docRef = await addDoc(collection(db, "todos"), newTodo);
             setTodos((prev) => [...prev, { ...newTodo, id: docRef.id }]);
@@ -69,6 +71,8 @@ function AppContent() {
     const filteredTodos = sortedTodos.filter((todo) => filter === "すべて" ? true : todo.status === filter);
     if (!user)
         return _jsx(AuthForm, {});
+    if (loading)
+        return _jsx("div", { children: "\u8AAD\u307F\u8FBC\u307F\u4E2D..." });
     return (_jsxs("div", { children: [_jsx("div", { className: "flex justify-end p-2", children: _jsx(LogoutButton, {}) }), _jsx(TodoTemplate, { todos: filteredTodos, filter: filter, onAddTodo: addTodo, onToggle: toggleTodo, onStatusChange: updateStatus, onDelete: deleteTodo, onFilterChange: setFilter })] }));
 }
 export default function App() {

@@ -1,3 +1,5 @@
+import React from "react";
+
 interface TimeInputProps {
   value: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;

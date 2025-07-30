@@ -1,3 +1,4 @@
+import React from "react";
 import { useEffect, useState } from "react";
 import { TodoTemplate } from "@/components/templates/TodoTemplate";
 import { db } from "@/firebase";
@@ -20,6 +21,7 @@ function AppContent() {
   const [filter, setFilter] = useState<
     "すべて" | "未完了" | "完了" | "保留" | "リスケ"
   >("すべて");
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (!user) return;
@@ -32,6 +34,7 @@ function AppContent() {
       setTodos(data);
     };
     fetchTodos();
+    setLoading(false);
   }, [user]);
 
   const addTodo = async (text: string, dueDate?: string) => {
@@ -90,6 +93,7 @@ function AppContent() {
   );
 
   if (!user) return <AuthForm />;
+  if (loading) return <div>読み込み中...</div>;
 
   return (
     <div>

@@ -1,4 +1,6 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // src/components/AuthForm.tsx
+import React from "react";
 import { useState } from "react";
 import {
   createUserWithEmailAndPassword,

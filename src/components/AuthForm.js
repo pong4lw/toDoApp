@@ -1,5 +1,4 @@
 import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
-// src/components/AuthForm.tsx
 import { useState } from "react";
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, } from "firebase/auth";
 import { auth } from "@/firebase";

@@ -1,5 +1,4 @@
 import { jsx as _jsx } from "react/jsx-runtime";
-// src/components/LogoutButton.tsx
 import { signOut } from "firebase/auth";
 import { auth } from "@/firebase";
 export const LogoutButton = () => {
