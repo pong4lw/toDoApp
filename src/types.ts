@@ -7,6 +7,7 @@ export interface Todo {
   text: string;
   status: TodoStatus;
   dueDate?: string | null;
+  userId?: string;
   createdAt?: string;
 }
 

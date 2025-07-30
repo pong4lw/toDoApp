@@ -42,7 +42,7 @@ function AppContent() {
         status: "未完了",
         dueDate: dueDate ?? undefined,
         createdAt: new Date().toISOString(),
-        userId: user.uid, // 任意: ユーザーごとに保存する場合
+        userId: user.uid, 
       };
       const docRef = await addDoc(collection(db, "todos"), newTodo);
       setTodos((prev) => [...prev, { ...newTodo, id: docRef.id }]);
