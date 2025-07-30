@@ -17,7 +17,11 @@ export default function TodoForm({ onAddTodo }) {
         if (date) {
             dueDate = time ? `${date}T${time}` : `${date}T00:00`;
         }
-        onAddTodo(trimmed, dueDate);
+        onAddTodo({
+            title: text,
+            memo: "",
+            dueDate,
+        });
         setText("");
         setDate("");
         setTime("");

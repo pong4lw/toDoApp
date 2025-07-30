@@ -9,7 +9,11 @@ type FilterType = "未完了" | "完了" | "保留" | "リスケ" | "すべて";
 interface TodoTemplateProps {
   todos: Todo[];
   filter: FilterType;
-  onAddTodo: (text: string, dueDate?: string) => void;
+  onAddTodo: (todo: {
+    title: string;
+    memo?: string;
+    dueDate?: string;
+  }) => void;
   onToggle: (id: string) => void;
   onStatusChange: (id: string, status: TodoStatus) => void;
   onDelete: (id: string) => void;

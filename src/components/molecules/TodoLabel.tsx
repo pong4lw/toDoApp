@@ -1,7 +1,7 @@
 import React from "react";
 
 interface TodoLabelProps {
-  memo: string;
+  memo?: string;
   isCompleted: boolean;
 }
 

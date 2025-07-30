@@ -6,7 +6,7 @@ import { TimeInput } from "../atoms/TimeInput";
 import { SubmitButton } from "../atoms/SubmitButton";
 
 interface TodoFormProps {
-  onAddTodo: (text: string, dueDate?: string) => void;
+  onAddTodo: (todo: { title: string; memo?: string; dueDate?: string }) => void;
 }
 
 export default function TodoForm({ onAddTodo }: TodoFormProps) {
@@ -23,8 +23,12 @@ export default function TodoForm({ onAddTodo }: TodoFormProps) {
     if (date) {
       dueDate = time ? `${date}T${time}` : `${date}T00:00`;
     }
+    onAddTodo({
+  title: text, 
+  memo: "",
+  dueDate,
+});
 
-    onAddTodo(trimmed, dueDate);
     setText("");
     setDate("");
     setTime("");

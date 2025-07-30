@@ -8,12 +8,14 @@ import { TodoLabel } from "../molecules/TodoLabel";
 
 interface TodoItemProps {
   id: string;
-  memo: string;
+  title?: string;
+  memo?: string;
   status: TodoStatus;
   dueDate?: string | null;
   onToggle: (id: string) => void;
   onStatusChange: (id: string, status: TodoStatus) => void;
   onDelete: (id: string) => void;
+  projectId?: string;
 }
 
 export default function TodoItem({

@@ -25,7 +25,7 @@ export default function AppContent() {
         queryFn: fetchTodos,
         enabled: !!user,
     });
-    const addTodo = async (title, memo, dueDate, projectId) => {
+    const addTodo = async ({ title, memo, dueDate, projectId }) => {
         if (!user)
             return;
         const newTodo = {

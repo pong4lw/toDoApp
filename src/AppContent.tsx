@@ -34,7 +34,14 @@ export default function AppContent() {
     enabled: !!user,
   });
 
-  const addTodo = async (title: string, memo?: string, dueDate?: string, projectId: string) => {
+type AddTodoParams = {
+  title: string;
+  memo?: string;
+  dueDate?: string;
+  projectId?: string;
+};
+
+const addTodo = async ({ title, memo, dueDate, projectId }: AddTodoParams) => {
     if (!user) return;
     const newTodo: Omit<Todo, "id"> = {
       title: title,

@@ -15,4 +15,10 @@ export interface Todo {
   updatedAt?: string;
 }
 
+interface TodoInput {
+  title: string;
+  memo?: string;
+  dueDate?: string;
+}
+
 export type FilterType = TodoStatus | "すべて";
