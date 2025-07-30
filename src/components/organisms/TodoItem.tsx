@@ -8,7 +8,7 @@ import { TodoLabel } from "../molecules/TodoLabel";
 
 interface TodoItemProps {
   id: string;
-  text: string;
+  memo: string;
   status: TodoStatus;
   dueDate?: string | null;
   onToggle: (id: string) => void;
@@ -18,11 +18,12 @@ interface TodoItemProps {
 
 export default function TodoItem({
   id,
-  text,
+  memo,
   status,
   dueDate,
   onToggle,
   onStatusChange,
+  projectId,
   onDelete,
 }: TodoItemProps) {
   const isCompleted = status === "完了";
@@ -34,7 +35,7 @@ export default function TodoItem({
     >
       <label className="flex items-center gap-2 cursor-pointer select-none">
         <Checkbox checked={isCompleted} onChange={() => onToggle(id)} />
-        <TodoLabel text={text} isCompleted={isCompleted} />
+        <TodoLabel memo={memo} isCompleted={isCompleted} />
       </label>
 
       <StatusSelect

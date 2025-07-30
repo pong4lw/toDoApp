@@ -17,13 +17,14 @@ export default function TodoList({
 }: TodoListProps) {
   return (
     <ul className="mt-6 space-y-2">
-      {todos.map(({ id, text, status, dueDate }) => (
+      {todos.map(({ id, memo, status, dueDate, projectId }) => (
         <TodoItem
           key={id}
           id={id}
-          text={text}
+          memo={memo}
           status={status}
           dueDate={dueDate}
+          projectId={projectId}
           onToggle={onToggle}
           onStatusChange={onStatusChange}
           onDelete={onDelete}
