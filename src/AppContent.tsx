@@ -8,8 +8,8 @@ import {
   doc,
   getDocs,
 } from "firebase/firestore";
-import { db } from "@/firebase";
-import { Todo, TodoStatus } from "@/types";
+import { db } from "@/lib/firebase";
+import { Todo, TodoStatus } from "@/lib/types";
 import { useAuth } from "@/hooks/useAuth";
 import { AuthForm } from "@/components/AuthForm";
 import { LogoutButton } from "@/components/LogoutButton";
@@ -19,6 +19,7 @@ import { useProjects } from "@/hooks/useProjects";
 export default function AppContent() {
   const user = useAuth();
   const { projects, loading } = useProjects();
+  const project = projects[0];
 
   const [filter, setFilter] = useState<
     "すべて" | "未完了" | "完了" | "保留" | "リスケ"
@@ -42,11 +43,24 @@ export default function AppContent() {
     enabled: !!user,
   });
 
+  const handleAddTodo = (title: string, dueDate: Date | null) => {
+    const newTodo: AddTodoParams = {
+      title,
+      dueDate: dueDate ? dueDate.toISOString() : undefined,
+      projectId: project.id,
+      status: "incomplete",
+      isCompleted: false,
+    };
+
+    addTodo(newTodo);
+  };
   type AddTodoParams = {
     title: string;
     memo?: string;
     dueDate?: string;
+    status: string;
     projectId?: string;
+    isCompleted: boolean;
   };
 
   const addTodo = async ({
@@ -114,7 +128,7 @@ export default function AppContent() {
               (todo) => todo.projectId === project.id,
             )}
             filter={filter}
-            onAddTodo={(todo) => addTodo({ ...todo, projectId: project.id })}
+            onAddTodo={handleAddTodo}
             onToggle={toggleTodo}
             onStatusChange={updateStatus}
             onDelete={deleteTodo}

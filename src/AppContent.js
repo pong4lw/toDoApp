@@ -2,7 +2,7 @@ import { jsx as _jsx, jsxs as _jsxs, Fragment as _Fragment } from "react/jsx-run
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { collection, addDoc, updateDoc, deleteDoc, doc, getDocs, } from "firebase/firestore";
-import { db } from "@/firebase";
+import { db } from "@/lib/firebase";
 import { useAuth } from "@/hooks/useAuth";
 import { AuthForm } from "@/components/AuthForm";
 import { TodoTemplate } from "@/components/templates/TodoTemplate";
@@ -10,6 +10,7 @@ import { useProjects } from "@/hooks/useProjects";
 export default function AppContent() {
     const user = useAuth();
     const { projects, loading } = useProjects();
+    const project = projects[0];
     const [filter, setFilter] = useState("すべて");
     const fetchTodos = async () => {
         const snapshot = await getDocs(collection(db, "tasks"));
@@ -23,6 +24,16 @@ export default function AppContent() {
         queryFn: fetchTodos,
         enabled: !!user,
     });
+    const handleAddTodo = (title, dueDate) => {
+        const newTodo = {
+            title,
+            dueDate: dueDate ? dueDate.toISOString() : undefined,
+            projectId: project.id,
+            status: "incomplete",
+            isCompleted: false,
+        };
+        addTodo(newTodo);
+    };
     const addTodo = async ({ title, memo, dueDate, projectId, }) => {
         if (!user)
             return;
@@ -69,5 +80,5 @@ export default function AppContent() {
         return _jsx(AuthForm, {});
     if (filteredTodos.length === 0)
         return null;
-    return (_jsx(_Fragment, { children: projects.map((project) => (_jsxs("div", { className: "mb-8 border p-4 rounded", children: [_jsx("h2", { className: "text-xl font-bold mb-2", children: project.name }), _jsx(TodoTemplate, { todos: filteredTodos.filter((todo) => todo.projectId === project.id), filter: filter, onAddTodo: (todo) => addTodo({ ...todo, projectId: project.id }), onToggle: toggleTodo, onStatusChange: updateStatus, onDelete: deleteTodo, onFilterChange: setFilter })] }, project.id))) }));
+    return (_jsx(_Fragment, { children: projects.map((project) => (_jsxs("div", { className: "mb-8 border p-4 rounded", children: [_jsx("h2", { className: "text-xl font-bold mb-2", children: project.name }), _jsx(TodoTemplate, { todos: filteredTodos.filter((todo) => todo.projectId === project.id), filter: filter, onAddTodo: handleAddTodo, onToggle: toggleTodo, onStatusChange: updateStatus, onDelete: deleteTodo, onFilterChange: setFilter })] }, project.id))) }));
 }

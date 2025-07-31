@@ -7,7 +7,7 @@ export const TaskForm = ({ onSubmit }) => {
     const { register, handleSubmit, reset, formState: { errors }, } = useForm();
     const [dueDate, setDueDate] = useState(null);
     const submit = (data) => {
-        onSubmit(data.title, dueDate);
+        onSubmit({ title: data.title, dueDate });
         reset();
         setDueDate(null);
     };

@@ -9,8 +9,8 @@ import {
   query,
   where,
 } from "firebase/firestore";
-import { db } from "@/firebase";
-import { Task, TodoStatus } from "@/types";
+import { db } from "@/lib/firebase";
+import { Task, TodoStatus } from "@/lib/types";
 import { TaskForm } from "@/components/TaskForm";
 import { TaskList } from "@/components/TaskList";
 
@@ -46,14 +46,16 @@ export const TaskContainer = ({ projectId }: Props) => {
     fetchTasks();
   }, [projectId]);
 
-  const addTask = async (title: string) => {
+  const addTask = async (todo: { title: string; dueDate: Date | null }) => {
     const newTask = {
-      title,
+      title: todo.title,
       status: "未完了",
       createdAt: new Date().toISOString(),
-      projectId,
+      projectId, // ここは適宜定義済み変数を使ってください
     };
+
     const docRef = await addDoc(collection(db, "tasks"), newTask);
+
     setTasks((prev) => [
       ...prev,
       {

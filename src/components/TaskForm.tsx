@@ -4,7 +4,7 @@ import "react-day-picker/dist/style.css";
 import { useForm } from "react-hook-form";
 
 type Props = {
-  onSubmit: (title: string, dueDate: Date | null) => void;
+  onSubmit: (todo: { title: string; dueDate: Date | null }) => void;
 };
 
 export const TaskForm = ({ onSubmit }: Props) => {
@@ -18,7 +18,7 @@ export const TaskForm = ({ onSubmit }: Props) => {
   const [dueDate, setDueDate] = useState<Date | null>(null);
 
   const submit = (data: { title: string }) => {
-    onSubmit(data.title, dueDate);
+    onSubmit({ title: data.title, dueDate });
     reset();
     setDueDate(null);
   };
@@ -37,7 +37,7 @@ export const TaskForm = ({ onSubmit }: Props) => {
         <DayPicker
           mode="single"
           selected={dueDate ?? undefined}
-          onSelect={(date) => setDueDate(date ?? null)} // ← ここで変換
+          onSelect={(date) => setDueDate(date ?? null)}
           required={false}
         />
       </div>

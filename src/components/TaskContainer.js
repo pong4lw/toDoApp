@@ -1,7 +1,7 @@
 import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
 import { useEffect, useState } from "react";
 import { collection, addDoc, getDocs, updateDoc, deleteDoc, doc, query, where, } from "firebase/firestore";
-import { db } from "@/firebase";
+import { db } from "@/lib/firebase";
 import { TaskForm } from "@/components/TaskForm";
 import { TaskList } from "@/components/TaskList";
 export const TaskContainer = ({ projectId }) => {
@@ -24,12 +24,12 @@ export const TaskContainer = ({ projectId }) => {
         };
         fetchTasks();
     }, [projectId]);
-    const addTask = async (title) => {
+    const addTask = async (todo) => {
         const newTask = {
-            title,
+            title: todo.title,
             status: "未完了",
             createdAt: new Date().toISOString(),
-            projectId,
+            projectId, // ここは適宜定義済み変数を使ってください
         };
         const docRef = await addDoc(collection(db, "tasks"), newTask);
         setTasks((prev) => [

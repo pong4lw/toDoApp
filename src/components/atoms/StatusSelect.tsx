@@ -1,4 +1,4 @@
-import { TodoStatus } from "@/types";
+import { TodoStatus } from "@/lib/types";
 import React from "react";
 
 interface StatusSelectProps {

@@ -1,6 +1,6 @@
 import { jsx as _jsx } from "react/jsx-runtime";
 import { signOut } from "firebase/auth";
-import { auth } from "@/firebase";
+import { auth } from "@/lib/firebase";
 export const LogoutButton = () => {
     const handleLogout = async () => {
         await signOut(auth);

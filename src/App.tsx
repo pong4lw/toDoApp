@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import { TodoTemplate } from "@/components/templates/TodoTemplate";
-import { db } from "@/firebase";
-import { Todo, TodoStatus } from "@/types";
+import { db } from "@/lib/firebase";
+import { Todo, TodoStatus } from "@/lib/types";
 import { AuthProvider, useAuth } from "@/hooks/useAuth";
 import { AuthForm } from "@/components/AuthForm";
 import { LogoutButton } from "@/components/LogoutButton";
+import TaskModal from "@/components/TaskModal";
+import TaskItem from "@/components/TaskItem";
 import {
   collection,
   addDoc,
@@ -21,7 +23,9 @@ function AppContent() {
   const [filter, setFilter] = useState<
     "すべて" | "未完了" | "完了" | "保留" | "リスケ"
   >("すべて");
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
+  // タスク一覧取得
   useEffect(() => {
     if (!user) return;
     const fetchTodos = async () => {
@@ -35,19 +39,19 @@ function AppContent() {
     fetchTodos();
   }, [user]);
 
+  // タスク追加
   const addTodo = async (todo: {
     title: string;
     memo?: string;
     dueDate?: string;
   }) => {
-    const { title, memo, dueDate } = todo;
     if (!user) return;
     try {
       const newTodo: Omit<Todo, "id"> = {
-        title: title,
-        memo: memo,
+        title: todo.title,
+        memo: todo.memo,
         status: "未完了",
-        dueDate: dueDate ?? undefined,
+        dueDate: todo.dueDate ?? undefined,
         createdAt: new Date().toISOString(),
         userId: user.uid,
         isCompleted: false,
@@ -59,6 +63,7 @@ function AppContent() {
     }
   };
 
+  // タスクの完了切り替え
   const toggleTodo = async (id: string) => {
     const target = todos.find((t) => t.id === id);
     if (!target) return;
@@ -71,6 +76,7 @@ function AppContent() {
     );
   };
 
+  // ステータス更新
   const updateStatus = async (id: string, newStatus: TodoStatus) => {
     await updateDoc(doc(db, "tasks", id), { status: newStatus });
     setTodos((prev) =>
@@ -80,11 +86,13 @@ function AppContent() {
     );
   };
 
+  // タスク削除
   const deleteTodo = async (id: string) => {
     await deleteDoc(doc(db, "tasks", id));
     setTodos((prev) => prev.filter((todo) => todo.id !== id));
   };
 
+  // 期日順で並び替え
   const sortedTodos = [...todos].sort((a, b) => {
     if (a.dueDate && b.dueDate)
       return new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime();
@@ -93,6 +101,7 @@ function AppContent() {
     return 0;
   });
 
+  // ステータス別でフィルター
   const filteredTodos = sortedTodos.filter((todo) =>
     filter === "すべて" ? true : todo.status === filter,
   );
@@ -101,18 +110,39 @@ function AppContent() {
 
   return (
     <div>
-      <div className="flex justify-end p-2">
+      <div className="flex justify-between items-center p-2">
+        <h1 className="text-xl font-bold">タスク管理アプリ</h1>
         <LogoutButton />
       </div>
+
+      <div className="px-4 py-2">
+        <button
+          onClick={() => setIsModalOpen(true)}
+          className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+        >
+          タスクを追加
+        </button>
+      </div>
+
       <TodoTemplate
         todos={filteredTodos}
         filter={filter}
-        onAddTodo={addTodo}
+        onAddTodo={() => setIsModalOpen(true)}
         onToggle={toggleTodo}
         onStatusChange={updateStatus}
         onDelete={deleteTodo}
         onFilterChange={setFilter}
       />
+
+      {isModalOpen && (
+        <TaskModal
+          onClose={() => setIsModalOpen(false)}
+          onSubmit={(todo) => {
+            addTodo(todo);
+            setIsModalOpen(false);
+          }}
+        />
+      )}
     </div>
   );
 }

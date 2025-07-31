@@ -1,5 +1,5 @@
 import React from "react";
-import { TodoStatus } from "@/types";
+import { TodoStatus } from "@/lib/types";
 import { Checkbox } from "../atoms/Checkbox";
 import { StatusSelect } from "../atoms/StatusSelect";
 import { DeleteButton } from "../atoms/DeleteButton";

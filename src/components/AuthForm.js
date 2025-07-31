@@ -1,7 +1,7 @@
 import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
 import { useState } from "react";
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, } from "firebase/auth";
-import { auth } from "@/firebase";
+import { auth } from "@/lib/firebase";
 export const AuthForm = () => {
     const [isNewUser, setIsNewUser] = useState(false);
     const [email, setEmail] = useState("");

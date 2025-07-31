@@ -1,7 +1,7 @@
 // hooks/useProjects.ts
 import { useEffect, useState } from "react";
 import { collection, getDocs, query, where } from "firebase/firestore";
-import { db } from "@/firebase";
+import { db } from "@/lib/firebase";
 import { useAuth } from "@/hooks/useAuth";
 
 type Project = {
@@ -20,9 +20,12 @@ export function useProjects() {
 
     const fetch = async () => {
       try {
-        const q = query(collection(db, "projects"), where("ownerId", "==", user.uid));
+        const q = query(
+          collection(db, "projects"),
+          where("ownerId", "==", user.uid),
+        );
         const snapshot = await getDocs(q);
-        const data = snapshot.docs.map(doc => ({
+        const data = snapshot.docs.map((doc) => ({
           id: doc.id,
           ...(doc.data() as Omit<Project, "id">),
         }));

@@ -1,4 +1,4 @@
-import { Task, TodoStatus } from "@/types";
+import { Task, TodoStatus } from "@/lib/types";
 
 type Props = {
   tasks: Task[];
