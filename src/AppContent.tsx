@@ -19,14 +19,13 @@ import { useProjects } from "@/hooks/useProjects";
 export default function AppContent() {
   const user = useAuth();
   const { projects, loading } = useProjects();
-  if (loading) return <p>読み込み中...</p>;
 
   const [filter, setFilter] = useState<
     "すべて" | "未完了" | "完了" | "保留" | "リスケ"
   >("すべて");
 
   const fetchTodos = async (): Promise<Todo[]> => {
-    const snapshot = await getDocs(collection(db, "todos"));
+    const snapshot = await getDocs(collection(db, "tasks"));
     return snapshot.docs.map((doc) => ({
       id: doc.id,
       ...(doc.data() as Omit<Todo, "id">),
@@ -38,7 +37,7 @@ export default function AppContent() {
     isLoading,
     refetch,
   } = useQuery({
-    queryKey: ["todos"],
+    queryKey: ["tasks"],
     queryFn: fetchTodos,
     enabled: !!user,
   });
@@ -75,17 +74,17 @@ export default function AppContent() {
     const target = todos.find((t) => t.id === id);
     if (!target) return;
     const newStatus = target.status === "完了" ? "未完了" : "完了";
-    await updateDoc(doc(db, "todos", id), { status: newStatus });
+    await updateDoc(doc(db, "tasks", id), { status: newStatus });
     refetch();
   };
 
   const updateStatus = async (id: string, newStatus: TodoStatus) => {
-    await updateDoc(doc(db, "todos", id), { status: newStatus });
+    await updateDoc(doc(db, "tasks", id), { status: newStatus });
     refetch();
   };
 
   const deleteTodo = async (id: string) => {
-    await deleteDoc(doc(db, "todos", id));
+    await deleteDoc(doc(db, "tasks", id));
     refetch();
   };
 
@@ -102,7 +101,7 @@ export default function AppContent() {
   );
 
   if (!user) return <AuthForm />;
-  if (isLoading) return <div>読み込み中...</div>;
+
   if (filteredTodos.length === 0) return null;
 
   return (
