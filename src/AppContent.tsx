@@ -1,6 +1,13 @@
 import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { collection, addDoc, updateDoc, deleteDoc, doc, getDocs } from "firebase/firestore";
+import {
+  collection,
+  addDoc,
+  updateDoc,
+  deleteDoc,
+  doc,
+  getDocs,
+} from "firebase/firestore";
 import { db } from "@/firebase";
 import { Todo, TodoStatus } from "@/types";
 import { useAuth } from "@/hooks/useAuth";
@@ -14,7 +21,9 @@ export default function AppContent() {
   const { projects, loading } = useProjects();
   if (loading) return <p>読み込み中...</p>;
 
-  const [filter, setFilter] = useState<"すべて" | "未完了" | "完了" | "保留" | "リスケ">("すべて");
+  const [filter, setFilter] = useState<
+    "すべて" | "未完了" | "完了" | "保留" | "リスケ"
+  >("すべて");
 
   const fetchTodos = async (): Promise<Todo[]> => {
     const snapshot = await getDocs(collection(db, "todos"));
@@ -34,14 +43,19 @@ export default function AppContent() {
     enabled: !!user,
   });
 
-type AddTodoParams = {
-  title: string;
-  memo?: string;
-  dueDate?: string;
-  projectId?: string;
-};
+  type AddTodoParams = {
+    title: string;
+    memo?: string;
+    dueDate?: string;
+    projectId?: string;
+  };
 
-const addTodo = async ({ title, memo, dueDate, projectId }: AddTodoParams) => {
+  const addTodo = async ({
+    title,
+    memo,
+    dueDate,
+    projectId,
+  }: AddTodoParams) => {
     if (!user) return;
     const newTodo: Omit<Todo, "id"> = {
       title: title,
@@ -76,7 +90,8 @@ const addTodo = async ({ title, memo, dueDate, projectId }: AddTodoParams) => {
   };
 
   const sortedTodos = [...todos].sort((a, b) => {
-    if (a.dueDate && b.dueDate) return new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime();
+    if (a.dueDate && b.dueDate)
+      return new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime();
     if (a.dueDate) return -1;
     if (b.dueDate) return 1;
     return 0;
@@ -92,12 +107,13 @@ const addTodo = async ({ title, memo, dueDate, projectId }: AddTodoParams) => {
 
   return (
     <>
-      {projects.map(project => (
+      {projects.map((project) => (
         <div key={project.id} className="mb-8 border p-4 rounded">
           <h2 className="text-xl font-bold mb-2">{project.name}</h2>
-
           <TodoTemplate
-            todos={filteredTodos.filter(todo => todo.projectId === project.id)}
+            todos={filteredTodos.filter(
+              (todo) => todo.projectId === project.id,
+            )}
             filter={filter}
             onAddTodo={(todo) => addTodo({ ...todo, projectId: project.id })}
             onToggle={toggleTodo}

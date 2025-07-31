@@ -21,4 +21,12 @@ interface TodoInput {
   dueDate?: string;
 }
 
+export interface Task {
+  id: string;
+  title: string;
+  status: TodoStatus;
+  projectId: string;
+  createdAt: string;
+}
+
 export type FilterType = TodoStatus | "すべて";
